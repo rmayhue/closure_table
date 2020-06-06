@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.3.0
+
+- improvements
+- tbd ..
+work in progress
+
 ## 0.2.1
 
 - support for immediate parent or child query #1; introducing the requirements for an extra field, in the tree_paths support table: `depth`

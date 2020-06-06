@@ -40,6 +40,7 @@ defmodule CTE.Adapter.Ecto do
         schema "tree_paths" do
           belongs_to :parent_comment, Comment, foreign_key: :ancestor
           belongs_to :comment, Comment, foreign_key: :descendant
+          field :depth, :integer, default: 0
         end
       end
 

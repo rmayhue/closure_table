@@ -60,7 +60,13 @@ defmodule CTE.Utils do
   defp dot_bubble(node, labels) do
     bubble_text =
       labels
-      |> Enum.map(&Map.get(node, &1, &1))
+      |> Enum.map(fn
+        l when is_function(l) ->
+          l.(node) || l
+
+        l ->
+          Map.get(node, l, l)
+      end)
       |> Enum.join("")
 
     "\"#{bubble_text}\""

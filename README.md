@@ -72,7 +72,7 @@ by adding `closure_table` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:closure_table, "~> 0.1"}
+    {:closure_table, "~> 0.3"}
   ]
 end
 ```
@@ -90,7 +90,7 @@ end
 ## License
 
 ```txt
-Copyright 2019 Florin T.PATRASCU
+Copyright 2020 Florin T.PATRASCU
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
