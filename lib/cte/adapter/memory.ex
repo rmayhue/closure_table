@@ -47,11 +47,10 @@ defmodule CTE.Adapter.Memory do
       |> Enum.filter(fn [ancestor, descendant, _] ->
         ancestor in descendants && descendant in descendants
       end)
-      |> Enum.map(&ignore_depth/1)
 
     nodes =
       subtree
-      |> Enum.reduce(%{}, fn [ancestor, descendant], acc ->
+      |> Enum.reduce(%{}, fn [ancestor, descendant, _depth], acc ->
         Map.merge(acc, %{
           ancestor => Map.get(nodes, ancestor),
           descendant => Map.get(nodes, descendant)
@@ -203,7 +202,7 @@ defmodule CTE.Adapter.Memory do
       acc_paths = paths ++ new_paths
       config = %{config | paths: acc_paths}
 
-      {:ok, Enum.map(new_paths, &ignore_depth/1), config}
+      {:ok, new_paths, config}
     else
       _ -> {:error, :no_ancestor, config}
     end
@@ -248,7 +247,4 @@ defmodule CTE.Adapter.Memory do
       leaves
     end
   end
-
-  @doc false
-  defp ignore_depth([ancestor, descendant, _]), do: [ancestor, descendant]
 end

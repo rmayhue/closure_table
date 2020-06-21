@@ -46,7 +46,7 @@ defmodule CTE.MixProject do
   defp deps do
     [
       # optional Ecto support
-      {:ecto, "~> 3.4.4", optional: true, runtime: false},
+      {:ecto, "~> 3.4.5", optional: true, runtime: false},
       {:ecto_sql, "~> 3.4.4", optional: true, runtime: false},
       {:postgrex, ">= 0.0.0", optional: true, runtime: false},
 
@@ -63,7 +63,7 @@ defmodule CTE.MixProject do
 
       # Documentation dependencies
       # Run me like this: `mix docs`
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end
 

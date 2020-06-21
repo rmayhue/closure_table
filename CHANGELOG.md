@@ -1,10 +1,10 @@
 # CHANGELOG
 
-## 0.3.0
+## 0.3.0 (work in progress)
 
-- improvements
-- tbd ..
-work in progress
+- the CT Ecto demo setup is much friendlier now, and it is also seeding the new database with demo data
+- the labels support functions now
+- the paths returned will always have the depth, as the 3rd element (breaking chance)
 
 ## 0.2.1
 

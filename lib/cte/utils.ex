@@ -22,7 +22,13 @@ defmodule CTE.Utils do
           },
           9 => %{author: "Polie", comment: "w⦿‿⦿t!", id: 9}
         },
-        paths: [[6, 6], [6, 8], [6, 9], '\t\t', '\b\b']
+        paths: [
+                 [6, 6, 0],
+                 [6, 8, 1],
+                 [8, 8, 0],
+                 [6, 9, 1],
+                 [9, 9, 0]
+               ]
       }
 
   this will output a .dot formatted string that you could use later for generating
@@ -35,12 +41,12 @@ defmodule CTE.Utils do
   def print_dot(%{paths: paths, nodes: nodes}, opts)
       when is_list(paths) and is_map(nodes) do
     labels = Keyword.get(opts, :labels, [])
-    [[root, _] | paths] = paths
+    [[root, _, _] | paths] = paths
 
     root = Map.get(nodes, root)
     acc = "digraph #{dot_bubble(root, labels)} {"
 
-    Enum.reduce(paths, acc, fn [ancestor, descendant], acc ->
+    Enum.reduce(paths, acc, fn [ancestor, descendant, _depth], acc ->
       parent = Map.get(nodes, ancestor)
       child = Map.get(nodes, descendant)
       acc <> "\n  " <> build_dot(parent, child, labels)

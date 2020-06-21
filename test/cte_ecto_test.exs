@@ -13,6 +13,7 @@ defmodule CTE.Ecto.Test do
     [6, 8],
     [6, 9]
   ]
+
   # -1
   # --2
   # ---3
@@ -221,7 +222,13 @@ defmodule CTE.Ecto.Test do
                   },
                   9 => %Comment{text: "w⦿‿⦿t!", author_id: 3}
                 },
-                paths: [[6, 6], [6, 8], '\b\b', [6, 9], '\t\t']
+                paths: [
+                  [6, 6, 0],
+                  [6, 8, 1],
+                  [8, 8, 0],
+                  [6, 9, 1],
+                  [9, 9, 0]
+                ]
               }} = CH.tree(6)
     end
 
@@ -238,7 +245,7 @@ defmodule CTE.Ecto.Test do
                     author_id: 1
                   }
                 },
-                paths: [[2, 2], [2, 3], [3, 3]]
+                paths: [[2, 2, 0], [2, 3, 1], [3, 3, 0]]
               }} = CH.tree(2, depth: 1)
     end
   end

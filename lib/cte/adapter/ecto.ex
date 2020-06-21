@@ -109,7 +109,13 @@ defmodule CTE.Adapter.Ecto do
           updated_at: ~U[2019-07-21 01:10:35Z]
         }
       },
-      paths: [[6, 6], [6, 8], [6, 9], '\t\t', '\b\b']
+      paths: [
+              [6, 6, 0],
+              [6, 8, 1],
+              [8, 8, 0],
+              [6, 9, 1],
+              [9, 9, 0]
+            ]
       }}
 
   Have fun!
@@ -253,7 +259,10 @@ defmodule CTE.Adapter.Ecto do
     descendants = _descendants(leaf, descendants_opts, config)
 
     # subtree = Enum.filter(paths, fn [ancestor, _descendant] -> ancestor in descendants end)
-    query = from p in paths, where: p.ancestor in ^descendants, select: [p.ancestor, p.descendant]
+    query =
+      from p in paths,
+        where: p.ancestor in ^descendants,
+        select: [p.ancestor, p.descendant, p.depth]
 
     subtree =
       query
