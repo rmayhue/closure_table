@@ -5,6 +5,16 @@
 - the CT Ecto demo setup is much friendlier now, and it is also seeding the new database with demo data
 - the labels support functions now
 - the paths returned will always have the depth, as the 3rd element (breaking chance)
+- support for pretty printing trees. Example:
+
+```elixir
+  {:ok, tree} = CTT.tree(1)
+  CTE.Utils.print_tree(tree,1, callback: &({&2[&1].author <> ":", &2[&1].comment}))
+
+  Olie: Is Closure Table better than the Nested Sets?
+  └── Rolie: It depends. Do you need referential integrity?
+   └── Olie: Yeah.
+```
 
 ## 0.2.1
 

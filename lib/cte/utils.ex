@@ -56,6 +56,98 @@ defmodule CTE.Utils do
 
   def print_dot(_, _), do: {:error, :invalid_argument}
 
+  @doc """
+  print the tree at the console, using a custom function for selecting the info to be displayed
+
+  The print_tree/3 function receives the tree structure returned by the CTE, the id of an existing node we
+  want to start printing the tree with, followed by the options.
+
+  ## Options
+
+    * `:callback` - a function that it is invoked for every node in the tree. Has two parameters:
+
+      * id - the id of the node we render
+      * nodes - the nodes received the tree structure, a map %{node_id => node}...any()
+
+      This function must return a tuple with two elements. First element is the name of the node we render,
+      the second one being any optional info you want to add.
+
+  Example:
+
+  iex» {:ok, tree} = CTT.tree(1)
+  iex» CTE.Utils.print_tree(tree,1, callback: &({&2[&1].author <> ":", &2[&1].comment}))
+
+  Olie: Is Closure Table better than the Nested Sets?
+  └── Rolie: It depends. Do you need referential integrity?
+   └── Olie: Yeah.
+
+  """
+  def print_tree(tree, id, opts \\ [])
+
+  def print_tree(%{paths: paths, nodes: nodes}, id, opts) do
+    user_callback = Keyword.get(opts, :callback, fn id, _nodes -> {id, "info..."} end)
+
+    tree =
+      paths
+      |> Enum.filter(fn [a, d, depth] -> a != d && depth < 2 end)
+      |> Enum.group_by(fn [a, _, _] -> a end, fn [_, d, _] -> d end)
+      |> Enum.reduce(%{}, fn {parent, children}, acc ->
+        descendants = children || []
+        Map.put(acc, parent, Enum.uniq(descendants))
+      end)
+
+    callback = fn
+      node_id when not is_nil(node_id) ->
+        {name, info} = user_callback.(node_id, nodes)
+        {{name, info}, Map.get(tree, node_id, [])}
+    end
+
+    _print_tree([id], callback)
+  end
+
+  defp _print_tree(nodes, callback) do
+    print_tree(nodes, _depth = [], _seen = %{}, callback)
+    :ok
+  end
+
+  # credits where credits due:
+  # - adapted from a Mix.Utils similar method
+  # TODO: replace it with a more generic support, and use a :queue instead.
+  defp print_tree(nodes, depth, seen, callback) do
+    {nodes, seen} =
+      Enum.flat_map_reduce(nodes, seen, fn node, seen ->
+        {{name, info}, children} = callback.(node)
+
+        if Map.has_key?(seen, name) do
+          {[{name, info, []}], seen}
+        else
+          {[{name, info, children}], Map.put(seen, name, true)}
+        end
+      end)
+
+    print_every_node(nodes, depth, seen, callback)
+  end
+
+  defp print_every_node([], _depth, seen, _callback), do: seen
+
+  defp print_every_node([{name, info, children} | nodes], depth, seen, callback) do
+    info = if(info, do: " #{info}", else: "")
+    IO.puts("#{depth(depth)}#{prefix(depth, nodes)}#{name}#{info}")
+    seen = print_tree(children, [nodes != [] | depth], seen, callback)
+
+    print_every_node(nodes, depth, seen, callback)
+  end
+
+  defp depth([]), do: ""
+  defp depth(depth), do: Enum.reverse(depth) |> tl |> Enum.map(&entry(&1))
+
+  defp entry(true), do: "│  "
+  defp entry(false), do: "   "
+
+  defp prefix([], _), do: ""
+  defp prefix(_, []), do: "└── "
+  defp prefix(_, _), do: "├── "
+
   @spec build_dot(String.t(), String.t(), list) :: String.t()
   defp build_dot(parent, child, []), do: "#{parent} -> #{child}"
 
