@@ -66,13 +66,16 @@ defmodule CTE.Utils do
 
     * `:callback` - a function that it is invoked for every node in the tree. Has two parameters:
 
-      * id - the id of the node we render
+      * id - the id of the node we render, ao a node specific unique identifier i.e. node name, etc.
       * nodes - the nodes received the tree structure, a map %{node_id => node}...any()
 
       This function must return a tuple with two elements. First element is the name of the node we render,
       the second one being any optional info you want to add.
 
-  Example:
+    * `:raw` - return a list of tuples if true. Each tuple will contain the depth of
+      the text returned from the callback. Useful for custom formatting the output of the print.
+
+  Example, using the default options:
 
   iex» {:ok, tree} = CTT.tree(1)
   iex» CTE.Utils.print_tree(tree,1, callback: &({&2[&1].author <> ":", &2[&1].comment}))
@@ -102,18 +105,22 @@ defmodule CTE.Utils do
         {{name, info}, Map.get(tree, node_id, [])}
     end
 
-    _print_tree([id], callback)
+    _print_tree([id], callback, opts)
   end
 
-  defp _print_tree(nodes, callback) do
-    print_tree(nodes, _depth = [], _seen = %{}, callback)
-    :ok
+  defp _print_tree(nodes, callback, opts) do
+    with {_seen, [] = out} <- print_tree(nodes, _depth = [], _seen = %{}, callback, opts, []) do
+      out
+    else
+      {_, out} -> Enum.reverse(out)
+      _ -> []
+    end
   end
 
   # credits where credits due:
   # - adapted from a Mix.Utils similar method
   # TODO: replace it with a more generic support, and use a :queue instead.
-  defp print_tree(nodes, depth, seen, callback) do
+  defp print_tree(nodes, depth, seen, callback, opts, out) do
     {nodes, seen} =
       Enum.flat_map_reduce(nodes, seen, fn node, seen ->
         {{name, info}, children} = callback.(node)
@@ -125,17 +132,28 @@ defmodule CTE.Utils do
         end
       end)
 
-    print_every_node(nodes, depth, seen, callback)
+    print_every_node(nodes, depth, seen, callback, opts, out)
   end
 
-  defp print_every_node([], _depth, seen, _callback), do: seen
+  defp print_every_node([], _depth, seen, _callback, _opts, out), do: {seen, out}
 
-  defp print_every_node([{name, info, children} | nodes], depth, seen, callback) do
-    info = if(info, do: " #{info}", else: "")
-    IO.puts("#{depth(depth)}#{prefix(depth, nodes)}#{name}#{info}")
-    seen = print_tree(children, [nodes != [] | depth], seen, callback)
+  defp print_every_node([{_name, info, children} | nodes], depth, seen, callback, opts, out) do
+    raw? = Keyword.get(opts, :raw, false)
+    info = if(info, do: info, else: "")
 
-    print_every_node(nodes, depth, seen, callback)
+    out =
+      if raw? do
+        [{length(depth), info} | out]
+      else
+        # info = if(info, do: " #{info}", else: "")
+        # IO.puts("#{depth(depth)}#{prefix(depth, nodes)}#{name}#{info}")
+        IO.puts("#{depth(depth)}#{prefix(depth, nodes)}#{info}")
+        out
+      end
+
+    {seen, out} = print_tree(children, [nodes != [] | depth], seen, callback, opts, out)
+
+    print_every_node(nodes, depth, seen, callback, opts, out)
   end
 
   defp depth([]), do: ""

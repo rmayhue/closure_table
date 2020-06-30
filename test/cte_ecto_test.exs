@@ -248,5 +248,21 @@ defmodule CTE.Ecto.Test do
                 paths: [[2, 2, 0], [2, 3, 1], [3, 3, 0]]
               }} = CH.tree(2, depth: 1)
     end
+
+    test "raw tree representation, for print" do
+      assert {:ok, tree} = CH.tree(1)
+
+      assert [
+               {0, "Is Closure Table better than the Nested Sets?"},
+               {1, "It depends. Do you need referential integrity?"},
+               {2, "Yeah"},
+               {3, "Closure Table *has* referential integrity?"},
+               {1, "Querying the data it’s easier."},
+               {2, "What about inserting nodes?"},
+               {2, "Everything is easier, than with the Nested Sets."},
+               {3, "I’m sold! And I’ll use its Elixir implementation! <3"},
+               {3, "w⦿‿⦿t!"}
+             ] = CTE.Utils.print_tree(tree, 1, callback: &{&1, &2[&1].text}, raw: true)
+    end
   end
 end

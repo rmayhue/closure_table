@@ -322,5 +322,38 @@ defmodule CTE.Memory.Test do
       # dot -Tpng polie.dot -o polie.png
       # System.cmd("dot", ~w/-Tpng polie.dot -o polie.png/)
     end
+
+    test "raw tree representation, for print" do
+      assert {:ok, tree} = CT.tree(1)
+      # CTE.Utils.print_tree(tree, 1, callback: &{&1, "#{&2[&1].author}: #{&2[&1].comment}"})
+
+      assert [
+               {0, "Olie: Is Closure Table better than the Nested Sets?"},
+               {1, "Rolie: It depends. Do you need referential integrity?"},
+               {2, "Olie: Yeah."},
+               {3, "Rolie: Closure Table *has* referential integrity?"},
+               {1, "Polie: Querying the data it's easier."},
+               {2, "Olie: What about inserting nodes?"},
+               {2, "Rolie: Everything is easier, than with the Nested Sets."},
+               {3, "Olie: I'm sold! And I'll use its Elixir implementation! <3"},
+               {3, "Polie: w⦿‿⦿t!"}
+             ] =
+               CTE.Utils.print_tree(tree, 1,
+                 callback: &{&1, "#{&2[&1].author}: #{&2[&1].comment}"},
+                 raw: true
+               )
+
+      assert {:ok, tree} = CT.tree(6)
+
+      assert [
+               {0, "Rolie: Everything is easier, than with the Nested Sets."},
+               {1, "Olie: I'm sold! And I'll use its Elixir implementation! <3"},
+               {1, "Polie: w⦿‿⦿t!"}
+             ] =
+               CTE.Utils.print_tree(tree, 6,
+                 callback: &{&1, "#{&2[&1].author}: #{&2[&1].comment}"},
+                 raw: true
+               )
+    end
   end
 end

@@ -48,4 +48,17 @@ iex» MyCTE.tree(1, depth: 1)
    },
    paths: [[1, 1, 0], [1, 2, 1], [1, 4, 1], [2, 2, 0], [4, 4, 0]]
  }}
+
+iex» authors = for author <- Repo.all(Author), into: %{}, do: {author.id, author.name}
+iex» CTE.Utils.print_tree(tree,1, callback: &({&1, "#{authors[&2[&1].author_id]}: #{&2[&1].text}"}))
+
+Olie: Is Closure Table better than the Nested Sets?
+├── Rolie: It depends. Do you need referential integrity?
+│  └── Olie: Yeah
+│     └── Rolie: Closure Table *has* referential integrity?
+└── Polie: Querying the data it’s easier.
+   ├── Olie: What about inserting nodes?
+   └── Rolie: Everything is easier, than with the Nested Sets.
+      ├── Olie: I’m sold! And I’ll use its Elixir implementation! <3
+      └── Polie: w⦿‿⦿t!
 ```
