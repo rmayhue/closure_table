@@ -92,7 +92,7 @@ defmodule CTE.Utils do
 
     tree =
       paths
-      |> Enum.filter(fn [a, d, depth] -> a != d && depth < 2 end)
+      |> Enum.filter(fn [a, d, depth] -> a != d && depth == 1 end)
       |> Enum.group_by(fn [a, _, _] -> a end, fn [_, d, _] -> d end)
       |> Enum.reduce(%{}, fn {parent, children}, acc ->
         descendants = children || []

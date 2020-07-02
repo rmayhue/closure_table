@@ -302,8 +302,8 @@ defmodule CTE.Adapter.Ecto do
     new_records = repo.all(descendants) ++ [%{ancestor: leaf, descendant: leaf, depth: 0}]
     descendants = Enum.map(new_records, fn r -> [r.ancestor, r.descendant] end)
 
-    with {nr, _r} when nr > 0 <- repo.insert_all(paths, new_records, on_conflict: :nothing),
-         l when l == nr <- length(new_records) do
+    with {_nr, _r} <- repo.insert_all(paths, new_records, on_conflict: :nothing) do
+      #  l when l == nr <- length(new_records) do
       {:ok, descendants}
     else
       e -> {:error, e}
