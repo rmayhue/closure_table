@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## 0.3.0 (work in progress)
+## 1.0.0 (rc)
+
+This is a new version introducing breaking changes. Please continue to use 0.2.1 for production, until we hit 1.2 unless you know what you're doing =)
 
 - the CT Ecto demo setup is much friendlier now, and it is also seeding the new database with demo data
 - the labels support functions now
