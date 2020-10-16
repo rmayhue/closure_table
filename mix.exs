@@ -46,8 +46,8 @@ defmodule CTE.MixProject do
   defp deps do
     [
       # optional Ecto support
-      {:ecto, "~> 3.4.6", optional: true, runtime: false},
-      {:ecto_sql, "~> 3.4.5", optional: true, runtime: false},
+      {:ecto, "~> 3.5", optional: true, runtime: false},
+      {:ecto_sql, "~> 3.5", optional: true, runtime: false},
       {:postgrex, ">= 0.0.0", optional: true, runtime: false},
 
       # dev/test/benching utilities
